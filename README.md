@@ -179,7 +179,7 @@ sequenceDiagram
     API->>DB: Update answer text
     API-->>FE: Updated submission
 
-    T as Teacher
+    participant T as Teacher
     T->>FE: Opens submissions for assignment
     FE->>API: GET /api/assignments/{id}/submissions
     API-->>FE: List of submissions
