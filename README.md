@@ -300,6 +300,61 @@ dotnet run --project src/AssignmentManagement.Api
 dotnet test AssignmentManagement.slnx
 ```
 
+### Scaffold the backend from an empty folder
+
+Everything below recreates this repository from zero — no clone needed. It mirrors exactly
+how the project was originally bootstrapped.
+
+```bash
+# 1. Create the project folder and enter it
+mkdir assignment-management-backend-dotnet
+cd assignment-management-backend-dotnet
+
+# 2. Create the solution file (.NET 10 defaults to the new XML .slnx format)
+dotnet new sln -n AssignmentManagement
+
+# 3. Create the API project (controllers-based Web API, not minimal API)
+dotnet new webapi -n AssignmentManagement.Api -o src/AssignmentManagement.Api --use-controllers
+dotnet sln add src/AssignmentManagement.Api
+
+# 4. Add the NuGet dependencies used by the API
+dotnet add src/AssignmentManagement.Api package BCrypt.Net-Next --version 4.2.0
+dotnet add src/AssignmentManagement.Api package FluentValidation.DependencyInjectionExtensions --version 12.1.1
+dotnet add src/AssignmentManagement.Api package Microsoft.AspNetCore.Authentication.JwtBearer --version 10.0.10
+dotnet add src/AssignmentManagement.Api package Microsoft.AspNetCore.OpenApi --version 10.0.10
+dotnet add src/AssignmentManagement.Api package Microsoft.EntityFrameworkCore --version 10.0.10
+dotnet add src/AssignmentManagement.Api package Microsoft.EntityFrameworkCore.Design --version 10.0.10
+dotnet add src/AssignmentManagement.Api package Npgsql.EntityFrameworkCore.PostgreSQL --version 10.0.3
+dotnet add src/AssignmentManagement.Api package Serilog.AspNetCore --version 10.0.0
+dotnet add src/AssignmentManagement.Api package Swashbuckle.AspNetCore --version 10.2.3
+
+# 5. Create the xUnit test project and link it to the API
+dotnet new xunit -n AssignmentManagement.Tests -o tests/AssignmentManagement.Tests
+dotnet add tests/AssignmentManagement.Tests reference src/AssignmentManagement.Api
+dotnet add tests/AssignmentManagement.Tests package Microsoft.EntityFrameworkCore.Sqlite --version 10.0.10
+dotnet add tests/AssignmentManagement.Tests package SQLitePCLRaw.bundle_e_sqlite3 --version 3.0.5
+dotnet sln add tests/AssignmentManagement.Tests
+
+# 6. Restore, build, and run
+dotnet restore AssignmentManagement.slnx
+dotnet build AssignmentManagement.slnx
+dotnet run --project src/AssignmentManagement.Api
+
+# 7. Add EF Core migrations once the entity model exists (the API auto-applies them on startup)
+dotnet tool install --global dotnet-ef          # install the EF Core CLI tool once
+dotnet ef migrations add InitialCreate --project src/AssignmentManagement.Api
+dotnet ef migrations add AddAssignmentStartsAtUtc --project src/AssignmentManagement.Api
+dotnet ef migrations add RemoveSubmissionIsLate --project src/AssignmentManagement.Api
+
+# 8. Run the tests
+dotnet test AssignmentManagement.slnx
+```
+
+> The `webapi` template ships with a sample `WeatherForecast` endpoint and
+> `AssignmentManagement.Api.http` file — delete both before adding your own controllers.
+> Each `dotnet add package` above also has a `--version`-less form
+> (`dotnet add <project> package <Name>`) that installs the latest compatible version.
+
 ## Database
 
 The API uses **PostgreSQL** via Entity Framework Core. Migrations are stored under
