@@ -8,6 +8,7 @@ assignment lifecycle management, student submissions, and grading.
 - Database: **PostgreSQL** with **Entity Framework Core** (Npgsql provider)
 - Auth: **JWT** (JwtBearer) + **BCrypt** password hashing
 - Validation: **FluentValidation**
+- Config: **DotNetEnv** (loads a `.env` file into config on startup)
 - Logging: **Serilog** (console)
 - API docs: **Swagger / Swashbuckle**
 - Tests: **xUnit**
@@ -205,17 +206,27 @@ sequenceDiagram
 
 ### 1. Create the database
 
-Create an empty database named `assignment_db` (or any name you like) and update the
-connection string in `src/AssignmentManagement.Api/appsettings.json` if yours differs:
+Create an empty database named `assignment_db` (or any name you like). Then set your
+connection string (and other secrets) in a `.env` file copied from the committed template:
 
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Host=localhost;Port=5432;Database=assignment_db;Username=postgres;Password=password"
-}
+```bash
+# Linux/macOS
+cp .env.example .env
+
+# Windows
+copy .env.example .env
 ```
 
-> The connection string can also be overridden with the environment variable
-> `ConnectionStrings__DefaultConnection` so you never need to edit the file.
+Edit `.env` to match your PostgreSQL credentials. The `__` keys map to `appsettings.json`
+(see [Configuration](#configuration)):
+
+```dotenv
+ConnectionStrings__DefaultConnection=Host=localhost;Port=5432;Database=assignment_db;Username=postgres;Password=password
+```
+
+> The connection string can also be overridden directly with the environment variable
+> `ConnectionStrings__DefaultConnection` — but prefer `.env` so secrets stay out of your shell
+> history. `.env` is git-ignored; only `.env.example` is committed.
 
 ### 2. Restore and build
 
@@ -322,6 +333,7 @@ dotnet sln add src/AssignmentManagement.Api
 
 # 4. Add the NuGet dependencies used by the API
 dotnet add src/AssignmentManagement.Api package BCrypt.Net-Next --version 4.2.0
+dotnet add src/AssignmentManagement.Api package DotNetEnv --version 3.2.0
 dotnet add src/AssignmentManagement.Api package FluentValidation.DependencyInjectionExtensions --version 12.1.1
 dotnet add src/AssignmentManagement.Api package Microsoft.AspNetCore.Authentication.JwtBearer --version 10.0.10
 dotnet add src/AssignmentManagement.Api package Microsoft.AspNetCore.OpenApi --version 10.0.10
