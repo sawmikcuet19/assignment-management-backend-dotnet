@@ -468,7 +468,7 @@ Authorization: Bearer <jwt>
 | Method | Path | Description |
 | ------ | ---- | ----------- |
 | `GET` / `POST` | `/api/admin/users` | List / create users |
-| `PUT` / `DELETE` | `/api/admin/users/{id}` | Update / deactivate a user |
+| `PUT` / `DELETE` | `/api/admin/users/{id}` | Update a user (including **changing their role**) / deactivate |
 | `GET` / `POST` | `/api/admin/classes` | List / create classes |
 | `PUT` / `DELETE` | `/api/admin/classes/{id}` | Update / deactivate a class |
 | `GET` / `POST` | `/api/admin/subjects` | List / create subjects |
@@ -516,7 +516,7 @@ Authorization: Bearer <jwt>
 | Update an answer | ✅ if allowed & before deadline | ❌ | ❌ |
 | View a submission | ✅ own only | ✅ for own classes | ✅ all |
 | Grade submissions (marks + feedback) | ❌ | ✅ | ❌ |
-| Manage users / classes / subjects | ❌ | ❌ | ✅ |
+| Manage users / classes / subjects (incl. **change any user's role**) | ❌ | ❌ | ✅ |
 | Assign teachers / enroll students | ❌ | ❌ | ✅ |
 
 ## Configuration
