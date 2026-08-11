@@ -365,10 +365,8 @@ del tests\AssignmentManagement.Tests\UnitTest1.cs   # xunit template sample test
 # 8. Copy the .env template and fill in your secrets (.env itself is git-ignored)
 copy .env.example .env
 
-# 9. Generate the migrations (the API applies them automatically on startup)
+# 9. Create the first migration (the API applies migrations automatically on startup)
 dotnet ef migrations add InitialCreate --project src/AssignmentManagement.Api
-dotnet ef migrations add AddAssignmentStartsAtUtc --project src/AssignmentManagement.Api
-dotnet ef migrations add RemoveSubmissionIsLate --project src/AssignmentManagement.Api
 
 # 10. Restore, build, run, and test
 dotnet restore AssignmentManagement.slnx
@@ -434,16 +432,6 @@ erDiagram
     USERS ||--o{ SUBMISSIONS : "submits"
     USERS }o--o{ ROLES : "has"
 ```
-
-### Migrations
-
-Current migration history (latest at the bottom):
-
-| Migration | Description |
-| --------- | ----------- |
-| `InitialCreate` | Base schema (all entities) |
-| `AddAssignmentStartsAtUtc` | Adds `StartsAtUtc` (timer start) to assignments |
-| `RemoveSubmissionIsLate` | Removes the unused `IsLate` flag from submissions |
 
 ### Seeded demo data
 
