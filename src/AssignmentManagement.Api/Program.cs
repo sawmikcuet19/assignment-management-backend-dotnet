@@ -17,6 +17,11 @@ using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load settings from the ".env" file (if present) into environment variables so they
+// override appsettings.json. Values use ASP.NET Core's "__" convention, e.g.
+// ConnectionStrings__DefaultConnection -> ConnectionStrings:DefaultConnection.
+DotNetEnv.Env.Load(Path.Combine(builder.Environment.ContentRootPath, ".env"));
+
 builder.Host.UseSerilog((context, configuration) =>
 {
     configuration

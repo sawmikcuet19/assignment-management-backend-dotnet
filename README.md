@@ -12,6 +12,9 @@ assignment lifecycle management, student submissions, and grading.
 - API docs: **Swagger / Swashbuckle**
 - Tests: **xUnit**
 
+> **Related repository — Frontend (Next.js):** [sawmikcuet19/assignment-management-frontend](https://github.com/sawmikcuet19/assignment-management-frontend)
+> The web client that consumes this API. Start this backend first, then run the frontend.
+
 ---
 
 ## Table of contents
@@ -198,7 +201,7 @@ sequenceDiagram
 
 - [.NET SDK 10.0](https://dotnet.microsoft.com/download/dotnet/10.0) or later
 - [PostgreSQL 15+](https://www.postgresql.org/download/) running locally
-- (Optional) the frontend app, see the [frontend README](../frontend/README.md)
+- (Optional) the frontend app, see the [frontend README](https://github.com/sawmikcuet19/assignment-management-frontend)
 
 ### 1. Create the database
 
@@ -491,9 +494,37 @@ Authorization: Bearer <jwt>
 | `PUT` | `/api/submissions/{id}` | Student | Update answer (if allowed before deadline) |
 | `PUT` | `/api/submissions/{id}/grade` | Teacher, Admin | Grade with marks + feedback |
 
+## What each role can do
+
+| Capability | Student | Teacher | Admin |
+| ---------- | ------- | ------- | ----- |
+| Register a new account | ✅ (as Student) | ❌ | ❌ |
+| Login and receive a JWT | ✅ | ✅ | ✅ |
+| List published assignments | ✅ own classes only | ✅ own class-subjects only | ✅ all |
+| Create / edit / publish / archive / delete assignments | ❌ | ✅ own class-subjects | ✅ |
+| Submit an answer | ✅ inside the timer window only | ❌ | ❌ |
+| Update an answer | ✅ if allowed & before deadline | ❌ | ❌ |
+| View a submission | ✅ own only | ✅ for own classes | ✅ all |
+| Grade submissions (marks + feedback) | ❌ | ✅ | ❌ |
+| Manage users / classes / subjects | ❌ | ❌ | ✅ |
+| Assign teachers / enroll students | ❌ | ❌ | ✅ |
+
 ## Configuration
 
-All settings live in `src/AssignmentManagement.Api/appsettings.json`:
+Settings are read from `src/AssignmentManagement.Api/appsettings.json` first, then overridden
+by environment variables, then by a **`.env`** file in the backend root (loaded on startup).
+`.env` uses ASP.NET Core's double-underscore convention:
+
+| `.env` key | Maps to | Default |
+| ---------- | ------- | ------- |
+| `ConnectionStrings__DefaultConnection` | `ConnectionStrings:DefaultConnection` | local PostgreSQL `assignment_db` |
+| `Jwt__Issuer` | `Jwt:Issuer` | `AssignmentManagement.Api` |
+| `Jwt__Audience` | `Jwt:Audience` | `AssignmentManagement.Web` |
+| `Jwt__Secret` | `Jwt:Secret` | dev secret in `appsettings.json` |
+| `Jwt__ExpiryMinutes` | `Jwt:ExpiryMinutes` | `60` |
+| `Cors__AllowedOrigins__0` | `Cors:AllowedOrigins[0]` | `http://localhost:3000` |
+
+`appsettings.json` table:
 
 | Key | Description | Default |
 | --- | ----------- | ------- |
@@ -504,6 +535,19 @@ All settings live in `src/AssignmentManagement.Api/appsettings.json`:
 | `Jwt:ExpiryMinutes` | Token lifetime | `60` |
 | `Cors:AllowedOrigins` | Allowed browser origins | `http://localhost:3000` |
 | `Serilog:MinimumLevel` | Log level overrides | Information |
+
+### Setting up your own `.env`
+
+```bash
+# Linux/macOS
+cp .env.example .env
+
+# Windows
+copy .env.example .env
+```
+
+Then edit `.env` with your real PostgreSQL credentials and a fresh JWT secret. The `.env`
+file is **git-ignored**; only the `.env.example` template (with dummy values) is committed.
 
 ## Security
 
@@ -519,5 +563,6 @@ All settings live in `src/AssignmentManagement.Api/appsettings.json`:
 
 ---
 
-Built for demonstration purposes. See the [frontend README](../frontend/README.md) for the
+Built for demonstration purposes. See the
+[frontend README](https://github.com/sawmikcuet19/assignment-management-frontend) for the
 Next.js client that consumes this API.
