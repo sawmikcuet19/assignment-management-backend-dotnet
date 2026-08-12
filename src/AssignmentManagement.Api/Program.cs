@@ -183,4 +183,22 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+try
+{
+    app.Run();
+}
+catch (IOException ex) when (ex.Message.Contains("address already in use", StringComparison.OrdinalIgnoreCase))
+{
+    Console.Error.WriteLine();
+    Console.Error.WriteLine("ERROR: Could not start the API - " + ex.Message);
+    Console.Error.WriteLine();
+    Console.Error.WriteLine("A stale process is still holding the API port. Stop it and run again, e.g.:");
+    Console.Error.WriteLine();
+    Console.Error.WriteLine("    Get-NetTCPConnection -State Listen -LocalPort 5178,7154 | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }");
+    Console.Error.WriteLine();
+    Console.Error.WriteLine("or just start the API with the helper script (it does this automatically):");
+    Console.Error.WriteLine();
+    Console.Error.WriteLine("    .\\run.ps1");
+    Console.Error.WriteLine();
+    Environment.ExitCode = 1;
+}

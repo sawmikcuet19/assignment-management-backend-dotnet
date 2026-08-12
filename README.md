@@ -238,8 +238,16 @@ dotnet build AssignmentManagement.slnx
 ### 3. Run
 
 ```bash
+# Windows (PowerShell or cmd) — recommended
+.\run.ps1
+
+# Plain dotnet run
 dotnet run --project src/AssignmentManagement.Api
 ```
+
+> `run.ps1` first stops any stale process still holding the dev ports (5178 / 7154) and then
+> starts the API, so you never see "address already in use". It only touches this project's
+> ports — the frontend on :3000 is left alone.
 
 On startup the API **automatically applies pending EF Core migrations** and seeds demo data
 (roles, users, a class/subject, and a sample published assignment).
@@ -263,6 +271,9 @@ dotnet restore AssignmentManagement.slnx
 dotnet build AssignmentManagement.slnx
 
 # Run the API (auto-migrate + seed on startup)
+.\run.ps1
+
+# Same as above, without the automatic port cleanup
 dotnet run --project src/AssignmentManagement.Api
 
 # Development watch mode (auto-restart on file changes)
@@ -570,6 +581,16 @@ file is **git-ignored**; only the `.env.example` template (with dummy values) is
 - **Input validation** — FluentValidation validators run via `ValidationFilter` on every request.
 - **Scoped data** — teachers only manage their own class-subjects, students only see/act on
   assignments and submissions in their scope (enforced in the service layer).
+
+## Troubleshooting
+
+### 1. Stuck at "Building..." when running the API
+If you run `dotnet run` and the console seemingly freezes at `Building...`, the API is likely actually running! By default, ASP.NET Core emits a "Now listening on: http://localhost:5178" `Information` log. However, if your `appsettings.json` overrides the `Microsoft` namespace log level to `Warning`, this startup message is suppressed.
+**Fix**: Ensure your `appsettings.json` has an explicit override for `Microsoft.Hosting.Lifetime` set to `Information` so you can see the startup logs.
+
+### 2. "The system cannot find the file specified" pointing to a 'corey' directory when using `run.cmd`
+If you run `run.cmd` inside PowerShell and see an error referencing `Start-Process -Filepath 'C:\Users\corey\...'`, it means PowerShell found a different `run.cmd` in your system `PATH` (typically belonging to Node Version Manager/NVM) instead of the local script.
+**Fix**: Always prefix the command with `.\` in PowerShell (i.e., run `.\run.cmd` or `.\run.ps1`).
 
 ---
 
