@@ -113,6 +113,34 @@ public class AdminService
         await db.SaveChangesAsync();
     }
 
+    public async Task HardDeleteUser(int id)
+    {
+        var user = await db.Users.FindAsync(id)
+            ?? throw new KeyNotFoundException("User not found.");
+
+        if (user.Id == currentUser.Id)
+        {
+            throw new InvalidOperationException("You cannot delete your own account.");
+        }
+
+        db.Users.Remove(user);
+        await db.SaveChangesAsync();
+    }
+
+    public async Task ActivateUser(int id)
+    {
+        var user = await db.Users.FindAsync(id)
+            ?? throw new KeyNotFoundException("User not found.");
+
+        if (user.Id == currentUser.Id)
+        {
+            throw new InvalidOperationException("You cannot activate your own account.");
+        }
+
+        user.IsActive = true;
+        await db.SaveChangesAsync();
+    }
+
     private static UserResponse MapUser(User user)
     {
         return new UserResponse(
@@ -194,6 +222,29 @@ public class AdminService
         await db.SaveChangesAsync();
     }
 
+    public async Task HardDeleteClass(int id)
+    {
+        var classCourse = await db.ClassCourses.FindAsync(id)
+            ?? throw new KeyNotFoundException("Class not found.");
+
+        db.ClassCourses.Remove(classCourse);
+        await db.SaveChangesAsync();
+    }
+
+    public async Task ActivateClass(int id)
+    {
+        var classCourse = await db.ClassCourses.FindAsync(id)
+            ?? throw new KeyNotFoundException("Class not found.");
+
+        if (classCourse.Id == currentUser.Id)
+        {
+            throw new InvalidOperationException("You cannot activate your own account.");
+        }
+
+        classCourse.IsActive = true;
+        await db.SaveChangesAsync();
+    }
+
     #endregion
 
     #region Subjects
@@ -261,6 +312,24 @@ public class AdminService
             ?? throw new KeyNotFoundException("Subject not found.");
 
         subject.IsActive = false;
+        await db.SaveChangesAsync();
+    }
+
+    public async Task HardDeleteSubject(int id)
+    {
+        var subject = await db.Subjects.FindAsync(id)
+            ?? throw new KeyNotFoundException("Subject not found.");
+
+        db.Subjects.Remove(subject);
+        await db.SaveChangesAsync();
+    }
+
+    public async Task ActivateSubject(int id)
+    {
+        var subject = await db.Subjects.FindAsync(id)
+            ?? throw new KeyNotFoundException("Subject not found.");
+
+        subject.IsActive = true;
         await db.SaveChangesAsync();
     }
 

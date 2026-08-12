@@ -271,6 +271,45 @@ public class AssignmentService
         await db.SaveChangesAsync();
     }
 
+    public async Task UnarchiveAssignment(int id)
+    {
+        var assignment = await db.Assignments
+            .FirstOrDefaultAsync(x => x.Id == id)
+            ?? throw new KeyNotFoundException("Assignment not found.");
+
+        await EnsureTeacherCanManage(assignment.ClassSubjectId);
+
+        if (assignment.Status != AssignmentStatus.Archived)
+        {
+            throw new InvalidOperationException("Only archived assignments can be unarchived.");
+        }
+
+        if (string.IsNullOrWhiteSpace(assignment.Title))
+        {
+            throw new InvalidOperationException("Assignment title is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(assignment.Description))
+        {
+            throw new InvalidOperationException("Assignment description is required.");
+        }
+
+        if (assignment.MaxMarks <= 0)
+        {
+            throw new InvalidOperationException("Maximum marks must be greater than zero.");
+        }
+
+        if (assignment.DeadlineUtc <= DateTime.UtcNow)
+        {
+            throw new InvalidOperationException("Deadline must be in the future.");
+        }
+
+        assignment.Status = AssignmentStatus.Published;
+        assignment.UpdatedAtUtc = DateTime.UtcNow;
+
+        await db.SaveChangesAsync();
+    }
+
     public async Task<string> DeleteAssignment(int id)
     {
         var assignment = await db.Assignments

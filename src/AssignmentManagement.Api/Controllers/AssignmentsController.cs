@@ -74,6 +74,17 @@ public class AssignmentsController : ControllerBase
         });
     }
 
+    [HttpPost("{id:int}/unarchive")]
+    [Authorize(Roles = "Teacher,Admin")]
+    public async Task<IActionResult> UnarchiveAssignment(int id)
+    {
+        await assignmentService.UnarchiveAssignment(id);
+        return Ok(new
+        {
+            message = "Assignment unarchived."
+        });
+    }
+
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Teacher,Admin")]
     public async Task<IActionResult> DeleteAssignment(int id)

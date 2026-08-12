@@ -40,7 +40,7 @@ assignment lifecycle management, student submissions, and grading.
 - **Role-based authorization** — `Admin`, `Teacher`, and `Student` roles enforced on every
   endpoint.
 - **Admin management** — users, classes, subjects, class-subject links, teacher assignment,
-  and student enrollment.
+  student enrollment, **activate/deactivate** classes and subjects.
 - **Assignment lifecycle** — create drafts, publish, archive, and delete; optional
   **start time + deadline** (open/closed timer window).
 - **Submissions** — students submit/update answers inside the timer window; teachers grade
@@ -494,10 +494,13 @@ Authorization: Bearer <jwt>
 | ------ | ---- | ----------- |
 | `GET` / `POST` | `/api/admin/users` | List / create users |
 | `PUT` / `DELETE` | `/api/admin/users/{id}` | Update a user (including **changing their role**) / deactivate |
+| `POST` | `/api/admin/users/{id}/activate` | **Activate** a user (set IsActive = true) |
 | `GET` / `POST` | `/api/admin/classes` | List / create classes |
 | `PUT` / `DELETE` | `/api/admin/classes/{id}` | Update / deactivate a class |
+| `POST` | `/api/admin/classes/{id}/activate` | **Activate** a class (set IsActive = true) |
 | `GET` / `POST` | `/api/admin/subjects` | List / create subjects |
 | `PUT` / `DELETE` | `/api/admin/subjects/{id}` | Update / deactivate a subject |
+| `POST` | `/api/admin/subjects/{id}/activate` | **Activate** a subject (set IsActive = true) |
 | `GET` / `POST` | `/api/admin/class-subjects` | List / create class-subject links |
 | `PUT` / `DELETE` | `/api/admin/class-subjects/{id}` | Update / deactivate a link |
 | `GET` / `POST` | `/api/admin/class-subjects/{id}/teachers` | List / assign teachers |

@@ -43,6 +43,20 @@ public class AdminController : ControllerBase
         return NoContent();
     }
 
+    [HttpDelete("users/{id:int}/hard-delete")]
+    public async Task<IActionResult> HardDeleteUser(int id)
+    {
+        await adminService.HardDeleteUser(id);
+        return NoContent();
+    }
+
+    [HttpPost("users/{id:int}/activate")]
+    public async Task<IActionResult> ActivateUser(int id)
+    {
+        await adminService.ActivateUser(id);
+        return NoContent();
+    }
+
     [HttpGet("classes")]
     public async Task<IActionResult> GetClasses()
     {
@@ -68,6 +82,20 @@ public class AdminController : ControllerBase
         return NoContent();
     }
 
+    [HttpDelete("classes/{id:int}/hard-delete")]
+    public async Task<IActionResult> HardDeleteClass(int id)
+    {
+        await adminService.HardDeleteClass(id);
+        return NoContent();
+    }
+
+    [HttpPost("classes/{id:int}/activate")]
+    public async Task<IActionResult> ActivateClass(int id)
+    {
+        await adminService.ActivateClass(id);
+        return NoContent();
+    }
+
     [HttpGet("subjects")]
     public async Task<IActionResult> GetSubjects()
     {
@@ -90,6 +118,20 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> DeactivateSubject(int id)
     {
         await adminService.DeactivateSubject(id);
+        return NoContent();
+    }
+
+    [HttpDelete("subjects/{id:int}/hard-delete")]
+    public async Task<IActionResult> HardDeleteSubject(int id)
+    {
+        await adminService.HardDeleteSubject(id);
+        return NoContent();
+    }
+
+    [HttpPost("subjects/{id:int}/activate")]
+    public async Task<IActionResult> ActivateSubject(int id)
+    {
+        await adminService.ActivateSubject(id);
         return NoContent();
     }
 

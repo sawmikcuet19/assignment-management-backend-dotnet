@@ -2,6 +2,7 @@ using AssignmentManagement.Api.Domain;
 using AssignmentManagement.Api.Dtos;
 using AssignmentManagement.Api.Services;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace AssignmentManagement.Tests;
 
@@ -222,6 +223,89 @@ public class AssignmentServiceTests
 
             await Assert.ThrowsAsync<KeyNotFoundException>(() =>
                 service.GetAssignmentById(assignment.Id));
+        }
+        finally
+        {
+            TestData.Dispose(db, connection);
+        }
+    }
+
+    [Fact]
+    public async Task UnarchiveAssignment_ArchivedAssignment_RepublishesForStudents()
+    {
+        var (db, connection) = TestDb.Create();
+        try
+        {
+            var teacher = TestData.CreateUser(db, "Teacher", "teacher@school.local");
+            var student = TestData.CreateUser(db, "Student", "student@school.local");
+            var classSubject = TestData.CreateClassSubject(db, "Class 9", "Mathematics");
+            TestData.AssignTeacher(db, classSubject.Id, teacher.Id);
+            TestData.EnrollStudent(db, classSubject.ClassId, student.Id);
+
+            var assignment = TestData.CreateAssignment(
+                db, classSubject.Id, teacher.Id,
+                title: "Archived homework", status: AssignmentStatus.Archived);
+
+            var teacherService = new AssignmentService(db, TestServices.As(teacher));
+            await teacherService.UnarchiveAssignment(assignment.Id);
+
+            var reloaded = await db.Assignments.AsNoTracking()
+                .FirstAsync(x => x.Id == assignment.Id);
+            Assert.Equal(AssignmentStatus.Published, reloaded.Status);
+
+            var studentService = new AssignmentService(db, TestServices.As(student));
+            var visible = await studentService.GetAssignments(null);
+            Assert.Contains(visible, x => x.Id == assignment.Id);
+        }
+        finally
+        {
+            TestData.Dispose(db, connection);
+        }
+    }
+
+    [Fact]
+    public async Task UnarchiveAssignment_WhenNotArchived_Throws()
+    {
+        var (db, connection) = TestDb.Create();
+        try
+        {
+            var teacher = TestData.CreateUser(db, "Teacher", "teacher@school.local");
+            var classSubject = TestData.CreateClassSubject(db);
+            TestData.AssignTeacher(db, classSubject.Id, teacher.Id);
+
+            var published = TestData.CreateAssignment(db, classSubject.Id, teacher.Id);
+
+            var service = new AssignmentService(db, TestServices.As(teacher));
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                service.UnarchiveAssignment(published.Id));
+        }
+        finally
+        {
+            TestData.Dispose(db, connection);
+        }
+    }
+
+    [Fact]
+    public async Task UnarchiveAssignment_WithPastDeadline_Throws()
+    {
+        var (db, connection) = TestDb.Create();
+        try
+        {
+            var teacher = TestData.CreateUser(db, "Teacher", "teacher@school.local");
+            var classSubject = TestData.CreateClassSubject(db);
+            TestData.AssignTeacher(db, classSubject.Id, teacher.Id);
+
+            var assignment = TestData.CreateAssignment(
+                db, classSubject.Id, teacher.Id,
+                title: "Expired homework",
+                status: AssignmentStatus.Archived,
+                deadlineUtc: DateTime.UtcNow.AddDays(-1));
+
+            var service = new AssignmentService(db, TestServices.As(teacher));
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                service.UnarchiveAssignment(assignment.Id));
         }
         finally
         {
