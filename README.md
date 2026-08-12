@@ -196,70 +196,84 @@ sequenceDiagram
     S->>FE: Sees marks + feedback
 ```
 
-## Getting started
+## Getting started (Beginner-Friendly Guide)
+
+If you are new to .NET or PostgreSQL, follow these step-by-step instructions to get the backend running on your machine.
 
 ### Prerequisites
 
-- [.NET SDK 10.0](https://dotnet.microsoft.com/download/dotnet/10.0) or later
-- [PostgreSQL 15+](https://www.postgresql.org/download/) running locally
-- (Optional) the frontend app, see the [frontend README](https://github.com/sawmikcuet19/assignment-management-frontend)
+Before starting, you need two things installed on your computer:
+1. **[.NET SDK 10.0](https://dotnet.microsoft.com/download/dotnet/10.0)** or later.
+   - *To check if it's installed, open your terminal and run:* `dotnet --version`
+2. **[PostgreSQL 15+](https://www.postgresql.org/download/)** running locally.
+   - *During installation, remember the password you set for the default `postgres` user.*
 
-### 1. Create the database
+### Step 1: Create the Database
 
-Create an empty database named `assignment_db` (or any name you like). Then set your
-connection string (and other secrets) in a `.env` file copied from the committed template:
+The backend needs a database to store data. You need to create an empty database named `assignment_db`.
 
+**Option A: Using pgAdmin (Visual tool)**
+1. Open pgAdmin (installed with PostgreSQL).
+2. Right-click on **Databases** > **Create** > **Database...**
+3. Type `assignment_db` as the Database name and click **Save**.
+
+**Option B: Using the Command Line**
+Open your terminal and run:
 ```bash
-# Linux/macOS
-cp .env.example .env
-
-# Windows
-copy .env.example .env
+psql -U postgres -c "CREATE DATABASE assignment_db;"
 ```
 
-Edit `.env` to match your PostgreSQL credentials. The `__` keys map to `appsettings.json`
-(see [Configuration](#configuration)):
+### Step 2: Configure your Database Credentials
 
-```dotenv
-ConnectionStrings__DefaultConnection=Host=localhost;Port=5432;Database=assignment_db;Username=postgres;Password=password
-```
+The app needs to know your PostgreSQL password to connect to the database you just created.
 
-> The connection string can also be overridden directly with the environment variable
-> `ConnectionStrings__DefaultConnection` — but prefer `.env` so secrets stay out of your shell
-> history. `.env` is git-ignored; only `.env.example` is committed.
+1. In the root of the backend folder, find the file named `.env.example`.
+2. Copy this file and rename the copy to `.env` (just `.env`, with no name before the dot).
+   - *Terminal shortcut (Windows):* `copy .env.example .env`
+   - *Terminal shortcut (Mac/Linux):* `cp .env.example .env`
+3. Open the new `.env` file in any text editor (like VS Code or Notepad).
+4. Find this line:
+   ```dotenv
+   ConnectionStrings__DefaultConnection=Host=localhost;Port=5432;Database=assignment_db;Username=postgres;Password=password
+   ```
+5. Change the word `password` at the very end of that line to the actual password you set when installing PostgreSQL. Save the file.
 
-### 2. Restore and build
+### Step 3: Install Dependencies and Build
+
+Now we'll download the required libraries and compile the code. Open your terminal in the backend folder and run:
 
 ```bash
+# Downloads required packages
 dotnet restore AssignmentManagement.slnx
+
+# Compiles the code
 dotnet build AssignmentManagement.slnx
 ```
 
-### 3. Run
+### Step 4: Run the API
 
-```bash
-# Windows (PowerShell or cmd) — recommended
+Finally, let's start the server!
+
+**For Windows Users (Recommended):**
+Open PowerShell and run the helper script (make sure to include the `.\` prefix!):
+```powershell
 .\run.ps1
+```
+*(Note: If you just type `run.cmd` without `.\`, PowerShell might accidentally run a different program on your computer.)*
 
-# Plain dotnet run
+**For Mac/Linux Users:**
+```bash
 dotnet run --project src/AssignmentManagement.Api
 ```
 
-> `run.ps1` first stops any stale process still holding the dev ports (5178 / 7154) and then
-> starts the API, so you never see "address already in use". It only touches this project's
-> ports — the frontend on :3000 is left alone.
+> **What happens next?** On the very first run, the app will automatically set up all the database tables and insert some dummy data (like demo users, classes, and assignments) so you can start testing immediately.
 
-On startup the API **automatically applies pending EF Core migrations** and seeds demo data
-(roles, users, a class/subject, and a sample published assignment).
+### Step 5: Test the API in your Browser
 
-- API (HTTP): http://localhost:5178
-- Swagger UI: http://localhost:5178/swagger
+Once the terminal says `Now listening on: http://localhost:5178` or `API is UP`, open your web browser and go to:
+👉 **[http://localhost:5178/swagger](http://localhost:5178/swagger)**
 
-### 4. Run the tests
-
-```bash
-dotnet test AssignmentManagement.slnx
-```
+You will see the Swagger UI, which is a visual dashboard where you can explore and test all the API endpoints!
 
 ## Terminal commands
 
