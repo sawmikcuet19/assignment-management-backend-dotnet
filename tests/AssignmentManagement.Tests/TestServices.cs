@@ -1,6 +1,7 @@
+using Microsoft.Extensions.Configuration;
+
 using AssignmentManagement.Api.Auth;
 using AssignmentManagement.Api.Domain;
-using Microsoft.Extensions.Configuration;
 
 namespace AssignmentManagement.Tests;
 

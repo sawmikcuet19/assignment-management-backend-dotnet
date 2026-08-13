@@ -1,5 +1,5 @@
 using AssignmentManagement.Api.Dtos;
-using AssignmentManagement.Api.Services;
+using AssignmentManagement.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
@@ -9,9 +9,9 @@ namespace AssignmentManagement.Api.Controllers;
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly AuthService authService;
+    private readonly IAuthService authService;
 
-    public AuthController(AuthService authService)
+    public AuthController(IAuthService authService)
     {
         this.authService = authService;
     }

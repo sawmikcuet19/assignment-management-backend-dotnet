@@ -6,6 +6,7 @@ using AssignmentManagement.Api.Auth;
 using AssignmentManagement.Api.Data;
 using AssignmentManagement.Api.Middleware;
 using AssignmentManagement.Api.Services;
+using AssignmentManagement.Api.Services.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -48,10 +49,10 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<CurrentUser>();
 builder.Services.AddScoped<JwtTokenService>();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<AdminService>();
-builder.Services.AddScoped<AssignmentService>();
-builder.Services.AddScoped<SubmissionService>();
+builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<ISubmissionService, SubmissionService>();
 
 builder.Services.AddEndpointsApiExplorer();
 

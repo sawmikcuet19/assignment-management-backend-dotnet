@@ -1,6 +1,6 @@
 using AssignmentManagement.Api.Domain;
 using AssignmentManagement.Api.Dtos;
-using AssignmentManagement.Api.Services;
+using AssignmentManagement.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +11,9 @@ namespace AssignmentManagement.Api.Controllers;
 [Authorize]
 public class AssignmentsController : ControllerBase
 {
-    private readonly AssignmentService assignmentService;
+    private readonly IAssignmentService assignmentService;
 
-    public AssignmentsController(AssignmentService assignmentService)
+    public AssignmentsController(IAssignmentService assignmentService)
     {
         this.assignmentService = assignmentService;
     }

@@ -1,5 +1,5 @@
 using AssignmentManagement.Api.Dtos;
-using AssignmentManagement.Api.Services;
+using AssignmentManagement.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +10,9 @@ namespace AssignmentManagement.Api.Controllers;
 [Authorize]
 public class SubmissionsController : ControllerBase
 {
-    private readonly SubmissionService submissionService;
+    private readonly ISubmissionService submissionService;
 
-    public SubmissionsController(SubmissionService submissionService)
+    public SubmissionsController(ISubmissionService submissionService)
     {
         this.submissionService = submissionService;
     }

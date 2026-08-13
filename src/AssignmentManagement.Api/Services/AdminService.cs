@@ -1,4 +1,5 @@
 using AssignmentManagement.Api.Auth;
+using AssignmentManagement.Api.Services.Interfaces;
 using AssignmentManagement.Api.Data;
 using AssignmentManagement.Api.Domain;
 using AssignmentManagement.Api.Dtos;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AssignmentManagement.Api.Services;
 
-public class AdminService
+public class AdminService : IAdminService
 {
     private readonly AppDbContext db;
     private readonly CurrentUser currentUser;

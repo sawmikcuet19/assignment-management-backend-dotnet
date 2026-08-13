@@ -143,7 +143,6 @@ public class SubmissionServiceTests
             var classSubject = TestData.CreateClassSubject(db);
             TestData.AssignTeacher(db, classSubject.Id, teacher.Id);
             TestData.EnrollStudent(db, classSubject.ClassId, student.Id);
-
             var assignment = TestData.CreateAssignment(db, classSubject.Id, teacher.Id,
                 deadlineUtc: DateTime.UtcNow.AddHours(1));
             var service = new SubmissionService(db, TestServices.As(student));

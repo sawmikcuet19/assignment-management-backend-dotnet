@@ -1,5 +1,5 @@
 using AssignmentManagement.Api.Dtos;
-using AssignmentManagement.Api.Services;
+using AssignmentManagement.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +10,9 @@ namespace AssignmentManagement.Api.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminController : ControllerBase
 {
-    private readonly AdminService adminService;
+    private readonly IAdminService adminService;
 
-    public AdminController(AdminService adminService)
+    public AdminController(IAdminService adminService)
     {
         this.adminService = adminService;
     }
