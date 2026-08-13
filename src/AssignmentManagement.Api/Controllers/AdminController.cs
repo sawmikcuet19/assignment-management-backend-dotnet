@@ -40,21 +40,21 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> DeactivateUser(int id)
     {
         await adminService.DeactivateUser(id);
-        return NoContent();
+        return Ok(new { message = "User deactivated successfully." });
     }
 
     [HttpDelete("users/{id:int}/hard-delete")]
     public async Task<IActionResult> HardDeleteUser(int id)
     {
         await adminService.HardDeleteUser(id);
-        return NoContent();
+        return Ok(new { message = "User permanently deleted." });
     }
 
     [HttpPost("users/{id:int}/activate")]
     public async Task<IActionResult> ActivateUser(int id)
     {
         await adminService.ActivateUser(id);
-        return NoContent();
+        return Ok(new { message = "User activated successfully." });
     }
 
     [HttpGet("classes")]
@@ -79,21 +79,21 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> DeactivateClass(int id)
     {
         await adminService.DeactivateClass(id);
-        return NoContent();
+        return Ok(new { message = "Class subject deactivated successfully." });
     }
 
     [HttpDelete("classes/{id:int}/hard-delete")]
     public async Task<IActionResult> HardDeleteClass(int id)
     {
         await adminService.HardDeleteClass(id);
-        return NoContent();
+        return Ok(new { message = "Class subject permanently deleted." });
     }
 
     [HttpPost("classes/{id:int}/activate")]
     public async Task<IActionResult> ActivateClass(int id)
     {
         await adminService.ActivateClass(id);
-        return NoContent();
+        return Ok(new { message = "Class subject activated successfully." });
     }
 
     [HttpGet("subjects")]
@@ -118,21 +118,21 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> DeactivateSubject(int id)
     {
         await adminService.DeactivateSubject(id);
-        return NoContent();
+        return Ok(new { message = "Subject deactivated successfully." });
     }
 
     [HttpDelete("subjects/{id:int}/hard-delete")]
     public async Task<IActionResult> HardDeleteSubject(int id)
     {
         await adminService.HardDeleteSubject(id);
-        return NoContent();
+        return Ok(new { message = "Subject permanently deleted." });
     }
 
     [HttpPost("subjects/{id:int}/activate")]
     public async Task<IActionResult> ActivateSubject(int id)
     {
         await adminService.ActivateSubject(id);
-        return NoContent();
+        return Ok(new { message = "Subject activated successfully." });
     }
 
     [HttpGet("class-subjects")]
@@ -157,7 +157,7 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> DeactivateClassSubject(int id)
     {
         await adminService.DeactivateClassSubject(id);
-        return NoContent();
+        return Ok(new { message = "Class subject deactivated successfully." });
     }
 
     [HttpPost("class-subjects/{classSubjectId:int}/teachers")]
@@ -174,7 +174,7 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> RemoveTeacher(int classSubjectId, int teacherUserId)
     {
         await adminService.RemoveTeacher(classSubjectId, teacherUserId);
-        return NoContent();
+        return Ok(new { message = "Teacher removed successfully." });
     }
 
     [HttpGet("class-subjects/{classSubjectId:int}/teachers")]
@@ -197,7 +197,7 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> RemoveStudent(int classId, int studentUserId)
     {
         await adminService.RemoveStudent(classId, studentUserId);
-        return NoContent();
+        return Ok(new { message = "Student removed successfully." });
     }
 
     [HttpGet("classes/{classId:int}/students")]
